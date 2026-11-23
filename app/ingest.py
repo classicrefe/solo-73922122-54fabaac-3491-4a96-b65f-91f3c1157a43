@@ -138,6 +138,11 @@ class VolumeFiles:
     def path(self, volume: str) -> str:
         return os.path.join(self.directory, f"{volume}.warc")
 
+    def read(self, volume: str) -> bytes:
+        """Return the archived bytes of *volume* (raises FileNotFoundError)."""
+        with open(self.path(volume), "rb") as fh:
+            return fh.read()
+
     def stage(self, volume: str, data: bytes) -> str:
         """Write the upload next to the live file and fsync it."""
         tmp = self.path(volume) + ".tmp"

@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import os
 
-from fastapi import FastAPI, File, HTTPException, Path, Query, UploadFile
+from fastapi import FastAPI, File, HTTPException, Path, Query, Response, UploadFile
 
 from .db import Store
 from .ingest import IngestError, VolumeFiles, replace_volume
+from .review import ReviewError, build_review_zip
 
 VOLUME_ID = Path(
     description="volume number/label",
@@ -64,6 +65,43 @@ def create_app(data_dir: str) -> FastAPI:
             raise HTTPException(status_code=404, detail=f"no such volume: {volume}")
         files.remove(volume)
         return {"deleted": volume}
+
+    @app.get(
+        "/volumes/{volume}/review.zip",
+        summary="Download a review package (ZIP) for lending out a volume",
+        responses={
+            200: {"content": {"application/zip": {}},
+                  "description": "ZIP with the original volume, the revisit "
+                                 "manifest and the attached evidence bodies."},
+            404: {"description": "No such volume."},
+            409: {"description": "A needed original volume is missing or "
+                                 "diverged from its catalog digest; the "
+                                 "offending volume numbers are reported and "
+                                 "no package is delivered."},
+        },
+    )
+    def review_package(volume: str = VOLUME_ID):
+        """Build a self-contained review package for *volume*.
+
+        The ZIP contains the original volume (``{volume}.warc``), a revisit
+        manifest (``manifest.json``) marking each revisit as evidenced
+        inside the volume (``in_volume``), evidenced by an attached body
+        (``attached``) or unevidenced even in the library (``missing``),
+        and one digest-verified HTTP body per attached digest
+        (``bodies/{digest}.bin``).  Source volumes' capture records and
+        HTTP headers stay in the library.  Manifest, original volume and
+        attached bodies always correspond to one committed state.
+        """
+        try:
+            data = build_review_zip(store, files, volume)
+        except ReviewError as exc:
+            raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+        return Response(
+            content=data,
+            media_type="application/zip",
+            headers={"Content-Disposition":
+                     f'attachment; filename="{volume}-review.zip"'},
+        )
 
     @app.get("/changes", summary="Find between which captures a URL's body changed")
     def changes(url: str = Query(description="exact WARC-Target-URI to inspect")):

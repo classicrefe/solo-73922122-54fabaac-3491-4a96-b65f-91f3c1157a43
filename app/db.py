@@ -161,3 +161,84 @@ class Store:
             return rows
         finally:
             con.close()
+
+    def review_snapshot(self, volume: str) -> dict | None:
+        """Everything a review package needs, from one committed state.
+
+        Runs inside a single read transaction, so the volume row, the
+        revisit list, the evidence classification and the catalog digests
+        of every volume the package will draw on all come from the same
+        snapshot, even while other volumes are being swapped.
+
+        Returns ``None`` when the volume is not in the catalog.  Otherwise
+        a dict with:
+
+        * ``volume_row``: the catalog row of *volume* (incl. its sha256),
+        * ``revisits``: every revisit capture of the volume, each with
+          ``evidence`` = ``in_volume`` (a digest-verified response with the
+          same digest exists inside this volume), ``attached`` (such a
+          response exists only in other volumes) or ``missing`` (none
+          anywhere in the library),
+        * ``sources``: digest -> volume holding a verified body, for the
+          ``attached`` entries (used to locate the body; not disclosed),
+        * ``catalog``: volume -> sha256 for every volume the package reads
+          (the lent volume plus all body sources).
+        """
+        con = self.connect()
+        try:
+            con.execute("BEGIN")
+            vol = con.execute(
+                "SELECT * FROM volumes WHERE volume = ?", (volume,)
+            ).fetchone()
+            if vol is None:
+                con.execute("COMMIT")
+                return None
+            rows = con.execute(
+                "SELECT url, ts, digest FROM captures"
+                " WHERE volume = ? AND type = 'revisit' ORDER BY ts",
+                (volume,),
+            ).fetchall()
+            revisits = []
+            sources: dict[str, str] = {}
+            needed = {volume}
+            for row in rows:
+                digest = row["digest"]
+                in_volume = con.execute(
+                    "SELECT 1 FROM captures WHERE volume = ? AND type = 'response'"
+                    " AND valid = 1 AND digest = ? LIMIT 1",
+                    (volume, digest),
+                ).fetchone()
+                if in_volume:
+                    evidence = "in_volume"
+                else:
+                    src = con.execute(
+                        "SELECT volume FROM captures WHERE volume != ?"
+                        " AND type = 'response' AND valid = 1 AND digest = ?"
+                        " ORDER BY volume LIMIT 1",
+                        (volume, digest),
+                    ).fetchone()
+                    if src is None:
+                        evidence = "missing"
+                    else:
+                        evidence = "attached"
+                        sources.setdefault(digest, src["volume"])
+                        needed.add(src["volume"])
+                revisits.append({
+                    "url": row["url"], "ts": row["ts"],
+                    "digest": digest, "evidence": evidence,
+                })
+            catalog = {}
+            for name in sorted(needed):
+                row = con.execute(
+                    "SELECT sha256 FROM volumes WHERE volume = ?", (name,)
+                ).fetchone()
+                catalog[name] = row["sha256"]
+            con.execute("COMMIT")
+            return {
+                "volume_row": dict(vol),
+                "revisits": revisits,
+                "sources": sources,
+                "catalog": catalog,
+            }
+        finally:
+            con.close()

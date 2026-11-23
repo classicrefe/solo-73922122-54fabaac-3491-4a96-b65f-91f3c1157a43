@@ -18,12 +18,22 @@ step "3. BEFORE swap: between which captures did the bulletin body change?"
 curl -sS -G "$BASE/changes" --data-urlencode "url=$URL" \
   | jq '{changes, unevidenced}'
 
+step "3b. review package for vol2 BEFORE swap (t3, t6 attached)"
+curl -sS -o /tmp/vol2-review-before.zip "$BASE/volumes/vol2/review.zip"
+unzip -l /tmp/vol2-review-before.zip
+unzip -p /tmp/vol2-review-before.zip manifest.json | jq '.revisits'
+
 step "4. replace vol1 with vol1b.warc (V2 body dropped)"
 curl -sS -X PUT "$BASE/volumes/vol1/warc" -F "file=@$DEMO_DIR/vol1b.warc;type=application/warc" | jq .
 
 step "5. AFTER swap: t3 revisit lost evidence, intervals recomputed"
 curl -sS -G "$BASE/changes" --data-urlencode "url=$URL" \
   | jq '{changes, unevidenced}'
+
+step "5b. review package for vol2 AFTER swap (t3 missing, t6 attached)"
+curl -sS -o /tmp/vol2-review-after.zip "$BASE/volumes/vol2/review.zip"
+unzip -l /tmp/vol2-review-after.zip
+unzip -p /tmp/vol2-review-after.zip manifest.json | jq '.revisits'
 
 step "6. conflicting upload is rejected (409) and old data kept"
 curl -sS -o /dev/null -w 'HTTP %{http_code}\n' -X PUT "$BASE/volumes/vol3/warc" \
