@@ -1,0 +1,14 @@
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2024-12-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:e1e07dbf-23d9-451d-833b-2383aa86d112>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:VJD7QCV2RNFB7SVOVP3XZU5VFRDXM6J7
+Content-Length: 146
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+馆藏公告（第一版）：本馆藏有民国县志三十种、清代府志八种。
+

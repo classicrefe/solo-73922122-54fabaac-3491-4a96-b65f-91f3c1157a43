@@ -1,0 +1,56 @@
+WARC/1.0
+WARC-Type: revisit
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2024-09-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:4e7052bd-63c2-41ea-a378-e6b31341a101>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:2DES5234TBQZZ72DBI4GOOJFW3H57T4Q
+Content-Length: 59
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2024-12-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:97fa606d-d500-4ab7-9a44-847133eda016>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:GTBQP22XWSCFYMJJWYO6YDKYAEE3FR5B
+Content-Length: 134
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+馆藏公告（第三版）：数字方志馆上线，支持全文检索。
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2025-03-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:de7ce0f4-8448-464a-a771-b9f9ab0a2dce>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:GV7ZMYDUV3EUNN4XORZ7DFYLKHH3QVCS
+Content-Length: 134
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+馆藏公告（第三版）：数字方志馆上线，支持全文检索。
+
+WARC/1.0
+WARC-Type: revisit
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2025-06-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:0bb947e3-07b2-4888-ad46-bf7dfc12138c>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:VJD7QCV2RNFB7SVOVP3XZU5VFRDXM6J7
+Content-Length: 59
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+
+

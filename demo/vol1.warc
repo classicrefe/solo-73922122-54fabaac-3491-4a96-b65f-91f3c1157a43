@@ -1,0 +1,52 @@
+WARC/1.0
+WARC-Type: warcinfo
+WARC-Target-URI: 
+WARC-Date: 2024-03-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:b00ceef4-2386-47de-8d12-2608ec358d54>
+Content-Type: application/warc-fields
+Content-Length: 28
+
+software: demo-crawler 1.0
+
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2024-03-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:498c91b2-ee62-479f-ae2b-ebadbd07abca>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:VJD7QCV2RNFB7SVOVP3XZU5VFRDXM6J7
+Content-Length: 146
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+馆藏公告（第一版）：本馆藏有民国县志三十种、清代府志八种。
+
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2024-06-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:0907412b-4a1c-42b2-9196-1dbb1c7b4ca5>
+Content-Type: application/http; msgtype=response
+WARC-Payload-Digest: sha1:2DES5234TBQZZ72DBI4GOOJFW3H57T4Q
+Content-Length: 137
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+馆藏公告（第二版）：新增解放后第一轮修志成果十二种。
+
+WARC/1.0
+WARC-Type: request
+WARC-Target-URI: http://gazetteer.example.gov.cn/zcgg/notice.html
+WARC-Date: 2024-03-01T09:00:00Z
+WARC-Record-ID: <urn:uuid:3475dab0-5e19-454b-8783-136cb6cae755>
+Content-Type: application/http; msgtype=request
+Content-Length: 66
+
+GET /zcgg/notice.html HTTP/1.1
+Host: gazetteer.example.gov.cn
+
+
+
